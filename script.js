@@ -17,6 +17,15 @@ function addExpense() {
     return;
   }
 
+  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const balance = budget - totalExpenses;
+
+  // 🚨 New Check: Expense should not exceed balance
+  if (amount > balance) {
+    alert("⚠️ Expense exceeds available balance!");
+    return;
+  }
+
   expenses.push({ id: ++expenseId, name, amount });
   document.getElementById("expense-name").value = "";
   document.getElementById("expense-amount").value = "";
@@ -25,6 +34,7 @@ function addExpense() {
   updateSummary();
   updateChart();
 }
+
 
 function renderExpenses() {
   const tbody = document.querySelector("#expense-table tbody");
