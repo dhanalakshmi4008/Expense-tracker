@@ -13,19 +13,24 @@ function addExpense() {
   const amount = parseFloat(document.getElementById("expense-amount").value);
 
   if (name === "" || isNaN(amount) || amount <= 0) {
-    alert("Please enter valid expense details.");
+    showNotification("❌ Please enter valid expense details.");
+    return;
+  }
+
+  if (budget <= 0) {
+    showNotification("⚠️ Please set a valid budget before adding expenses!");
     return;
   }
 
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
   const balance = budget - totalExpenses;
 
-  // 🚨 New Check: Expense should not exceed balance
   if (amount > balance) {
-    alert("⚠️ Expense exceeds available balance!");
+    showNotification(`⚠️ Expense exceeds balance! Only $${balance} left.`);
     return;
   }
 
+  // Add expense
   expenses.push({ id: ++expenseId, name, amount });
   document.getElementById("expense-name").value = "";
   document.getElementById("expense-amount").value = "";
@@ -33,6 +38,21 @@ function addExpense() {
   renderExpenses();
   updateSummary();
   updateChart();
+
+  // Success message
+  showNotification("✅ Expense added successfully!", "success");
+}
+
+function showNotification(message, type = "error") {
+  const box = document.getElementById("notification");
+  box.innerText = message;
+  box.className = `notification ${type}`;
+  box.style.display = "block";
+
+  // Hide automatically after 3 seconds
+  setTimeout(() => {
+    box.style.display = "none";
+  }, 3000);
 }
 
 
